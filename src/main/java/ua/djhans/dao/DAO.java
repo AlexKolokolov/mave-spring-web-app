@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by Administrator on 09.12.2015.
  */
 public class DAO {
-    private static DAO instace;
+    private static DAO instance;
     ApplicationContext context;
     JdbcTemplate jdbc;
 
@@ -26,8 +26,8 @@ public class DAO {
     }
 
     public static DAO getDAO() {
-        if (instace == null) instace = new DAO();
-        return instace;
+        if (instance == null) instance = new DAO();
+        return instance;
     }
 
     public List<Book> getBooks(int authorId) {
