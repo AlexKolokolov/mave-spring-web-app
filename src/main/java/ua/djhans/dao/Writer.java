@@ -25,4 +25,13 @@ public class Writer {
     public String getNameRus() {
         return nameRus;
     }
+
+    @Override
+    public String toString() {
+        return "Writer{" +
+                "id=" + id +
+                ", nameEn='" + nameEn + '\'' +
+                ", nameRus='" + nameRus + '\'' +
+                '}';
+    }
 }

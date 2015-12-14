@@ -1,6 +1,9 @@
 package ua.djhans.dao;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,12 +20,14 @@ import java.util.Map;
  */
 public class DAO {
     private static DAO instance;
-    ApplicationContext context;
-    JdbcTemplate jdbc;
+    private final ApplicationContext context;
+    private final JdbcTemplate jdbc;
+    private final Logger log;
 
     private DAO() {
         context = new ClassPathXmlApplicationContext(new String[]{"springContext.xml"});
         jdbc = context.getBean("jdbcTemplate", JdbcTemplate.class);
+        log = LoggerFactory.getLogger(DAO.class);
     }
 
     public static DAO getDAO() {
@@ -42,6 +47,7 @@ public class DAO {
             @Override
             public Book mapRow(ResultSet rs, int i) throws SQLException {
                 Book book = new Book(rs.getInt(1), writerMap.get(rs.getInt(4)).getNameEn(), writerMap.get(rs.getInt(4)).getNameRus(), rs.getString(2), rs.getString(3));
+                log.debug("book: {}", book);
                 return book;
             }
         });
@@ -55,6 +61,7 @@ public class DAO {
             @Override
             public Writer mapRow(ResultSet rs, int i) throws SQLException {
                 Writer writer = new Writer(rs.getInt(1), rs.getString(2), rs.getString(3));
+                log.debug("writer: {}", writer);
                 return writer;
             }
         });
@@ -63,5 +70,9 @@ public class DAO {
 
     public List<Writer> getWriters() {
         return getWriters(0);
+    }
+
+    public static void main(String[] args) {
+        DAO.getDAO().log.debug("Первая в списке книга Бальзака: {}", DAO.getDAO().getBooks(4).get(0));
     }
 }

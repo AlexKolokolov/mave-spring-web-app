@@ -37,4 +37,15 @@ public class Book {
     public String getTitleRus() {
         return titleRus;
     }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", authorEn='" + authorEn + '\'' +
+                ", authorRus='" + authorRus + '\'' +
+                ", titleEn='" + titleEn + '\'' +
+                ", titleRus='" + titleRus + '\'' +
+                '}';
+    }
 }
