@@ -16,12 +16,9 @@ import java.util.Collection;
 public class Writers extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Collection<Writer> allWriters = DAO.getDAO().getWriters(0);
-//        Collection<Writer> allWriters = new ArrayList<>();
-//        allWriters.add(new Writer(1, "Jack London", "Джек Лондон"));
-//        allWriters.add(new Writer(2, "Jack London2", "Джек Лондон2"));
-//        allWriters.add(new Writer(3, "Jack London3", "Джек Лондон3"));
-        req.setAttribute("writers", allWriters);
+        Collection<Writer> writers = DAO.getDAO().getWriters();
+
+        req.setAttribute("writers", writers);
         req.getRequestDispatcher("writers.jsp").forward(req,resp);
     }
 }

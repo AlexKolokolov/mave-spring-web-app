@@ -60,4 +60,8 @@ public class DAO {
         });
         return writers;
     }
+
+    public List<Writer> getWriters() {
+        return getWriters(0);
+    }
 }
