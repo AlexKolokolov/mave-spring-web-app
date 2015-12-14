@@ -36,8 +36,8 @@ public class DAO {
         Map<Integer, Writer> writerMap = new HashMap<>();
         for (Writer writer : writers) writerMap.put(writer.getId(),writer);
 
-        String sqlQuery = "select book_id, title_en, title_rus, author_id from books";
-        if(authorId != 0) sqlQuery += " where author_id = " + authorId;
+        String sqlQuery = "SELECT book_id, title_en, title_rus, author_id FROM books";
+        if(authorId != 0) sqlQuery += " WHERE author_id = " + authorId;
         List<Book> books = jdbc.query(sqlQuery, new RowMapper<Book>() {
             @Override
             public Book mapRow(ResultSet rs, int i) throws SQLException {
@@ -49,8 +49,8 @@ public class DAO {
     }
 
     public List<Writer> getWriters(int authorId) {
-        String sqlQuery = "select writer_id, name_en, name_rus from writers";
-        if (authorId != 0) sqlQuery += " where writer_id = " + authorId;
+        String sqlQuery = "SELECT writer_id, name_en, name_rus FROM writers";
+        if (authorId != 0) sqlQuery += " WHERE writer_id = " + authorId;
         List<Writer> writers = jdbc.query(sqlQuery, new RowMapper<Writer>() {
             @Override
             public Writer mapRow(ResultSet rs, int i) throws SQLException {
