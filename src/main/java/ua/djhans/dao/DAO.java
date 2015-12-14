@@ -4,8 +4,12 @@ package ua.djhans.dao;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,27 +30,34 @@ public class DAO {
         return instace;
     }
 
-    public ArrayList<Book> getBooks(int authorId) {
-        ArrayList<Writer> writers = getWriters(authorId);
-        ArrayList<Book> books = new ArrayList<>();
-        String sql = "select book_id, title_en, title_rus, author_id from books";
-        if(authorId != 0) sql += " where author_id = " + authorId;
-        for (Map<String,Object> row : jdbc.queryForList(sql)) {
-            for (Writer writer : writers) {
-                if (writer.getId() == (int)(long)row.get("author_id"))
-                    books.add(new Book((int)(long)row.get("book_id"), writer.getNameEn(), writer.getNameRus(), (String)row.get("title_en"), (String)row.get("title_rus")));
+    public List<Book> getBooks(int authorId) {
+
+        List<Writer> writers = getWriters(authorId);
+        Map<Integer, Writer> writerMap = new HashMap<>();
+        for (Writer writer : writers) writerMap.put(writer.getId(),writer);
+
+        String sqlQuery = "select book_id, title_en, title_rus, author_id from books";
+        if(authorId != 0) sqlQuery += " where author_id = " + authorId;
+        List<Book> books = jdbc.query(sqlQuery, new RowMapper<Book>() {
+            @Override
+            public Book mapRow(ResultSet rs, int i) throws SQLException {
+                Book book = new Book(rs.getInt(1), writerMap.get(rs.getInt(4)).getNameEn(), writerMap.get(rs.getInt(4)).getNameRus(), rs.getString(2), rs.getString(3));
+                return book;
             }
-        }
+        });
         return books;
     }
 
-    public ArrayList<Writer> getWriters(int authorId) {
-        ArrayList<Writer> writers = new ArrayList<>();
-        String sql = "select writer_id, name_en, name_rus from writers";
-        if (authorId != 0) sql += " where writer_id = " + authorId;
-        for (Map<String,Object> row : jdbc.queryForList(sql)) {
-            writers.add(new Writer((int)(long)row.get("writer_id"), (String)row.get("name_en"), (String)row.get("name_rus")));
-        }
+    public List<Writer> getWriters(int authorId) {
+        String sqlQuery = "select writer_id, name_en, name_rus from writers";
+        if (authorId != 0) sqlQuery += " where writer_id = " + authorId;
+        List<Writer> writers = jdbc.query(sqlQuery, new RowMapper<Writer>() {
+            @Override
+            public Writer mapRow(ResultSet rs, int i) throws SQLException {
+                Writer writer = new Writer(rs.getInt(1), rs.getString(2), rs.getString(3));
+                return writer;
+            }
+        });
         return writers;
     }
 }
