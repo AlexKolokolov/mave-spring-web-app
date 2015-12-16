@@ -11,9 +11,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * Created by Administrator on 09.12.2015.
@@ -36,17 +35,13 @@ public class DAO {
     }
 
     public List<Book> getBooks(int authorId) {
-
-        List<Writer> writers = getWriters(authorId);
-        Map<Integer, Writer> writerMap = new HashMap<>();
-        for (Writer writer : writers) writerMap.put(writer.getId(),writer);
-
-        String sqlQuery = "SELECT book_id, title_en, title_rus, author_id FROM books";
-        if(authorId != 0) sqlQuery += " WHERE author_id = " + authorId;
+        String sqlQuery = "SELECT b.book_id, w.name_en, w.name_rus, b.title_en, b.title_rus " +
+                "FROM books b INNER JOIN writers w ON b.author_id = w.writer_id";
+        if(authorId != 0) sqlQuery += " AND b.author_id = " + authorId;
         List<Book> books = jdbc.query(sqlQuery, new RowMapper<Book>() {
             @Override
             public Book mapRow(ResultSet rs, int i) throws SQLException {
-                Book book = new Book(rs.getInt(1), writerMap.get(rs.getInt(4)).getNameEn(), writerMap.get(rs.getInt(4)).getNameRus(), rs.getString(2), rs.getString(3));
+                Book book = new Book(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
                 log.debug("book: {}", book);
                 return book;
             }
@@ -54,9 +49,8 @@ public class DAO {
         return books;
     }
 
-    public List<Writer> getWriters(int authorId) {
+    public List<Writer> getWriters() {
         String sqlQuery = "SELECT writer_id, name_en, name_rus FROM writers";
-        if (authorId != 0) sqlQuery += " WHERE writer_id = " + authorId;
         List<Writer> writers = jdbc.query(sqlQuery, new RowMapper<Writer>() {
             @Override
             public Writer mapRow(ResultSet rs, int i) throws SQLException {
@@ -66,10 +60,6 @@ public class DAO {
             }
         });
         return writers;
-    }
-
-    public List<Writer> getWriters() {
-        return getWriters(0);
     }
 
     public static void main(String[] args) {
