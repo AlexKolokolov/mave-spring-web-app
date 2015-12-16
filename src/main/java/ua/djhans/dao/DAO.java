@@ -35,9 +35,9 @@ public class DAO {
     }
 
     public List<Book> getBooks(int authorId) {
-        String sqlQuery = "SELECT b.book_id, w.name_en, w.name_rus, b.title_en, b.title_rus " +
-                "FROM books b INNER JOIN writers w ON b.author_id = w.writer_id";
-        if(authorId != 0) sqlQuery += " AND b.author_id = " + authorId;
+        String sqlQuery = "SELECT book_id, name_en, name_rus, title_en, title_rus " +
+                "FROM books INNER JOIN writers ON author_id = writer_id";
+        if(authorId != 0) sqlQuery += " AND author_id = " + authorId;
         List<Book> books = jdbc.query(sqlQuery, new RowMapper<Book>() {
             @Override
             public Book mapRow(ResultSet rs, int i) throws SQLException {
